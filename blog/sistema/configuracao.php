@@ -1,6 +1,12 @@
 <?php
 //Arquivo de configuração do sistema;
 
+define('DB_HOST', 'localhost');
+define('DB_PORTA', '3306');
+define('DB_NOME', 'blog');
+define('DB_USUARIO', 'root');
+define('DB_SENHA', '');
+
 //informações do siteç
 define('SITE_NOME', 'UnSet');
 define('SITE_DESCRICAO', 'UnSet - Tecnologia em sustemas');
