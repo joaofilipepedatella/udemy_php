@@ -4,6 +4,17 @@ namespace sistema\Nucleo;
 
 class Helpers
 {
+
+  public static function redirecionar(string $url = null): void
+  {
+    header('HTTP/1.1 302 FOUND');
+
+    $local = ($url ? self::url($url) : self::url());
+
+    header("Location: {$local}");
+    exit();
+  }
+
   public static function validarCpf(string $cpf): bool
   {
     $cpf = self::limparNumero($cpf);
