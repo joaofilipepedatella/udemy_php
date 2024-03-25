@@ -12,14 +12,10 @@
     },
     "authors": [
         {
-            "name": "Ronaldo Aires",
-            "homepage": "https://www.unset.com.br",
+            "name": "João Filipe Pedatella",
             "role": "Developer"
         }
     ],
-    "support": {
-        "email": "ceo@unset.com.br"
-    },
     "minimum-stability": "dev",
     "require": {
         "php": ">=8.0",

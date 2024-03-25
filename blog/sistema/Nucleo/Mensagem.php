@@ -1,12 +1,6 @@
 <?php
 
 namespace sistema\Nucleo;
-
-/**
- * Classe Mensagem – responsável por exibir as mensagens do sistema.
- * @author Ronaldo Aires <ceo@unset.com.br>
- * @copyright Copyright (c) 2022, UnSet
- */
 class Mensagem
 {
 

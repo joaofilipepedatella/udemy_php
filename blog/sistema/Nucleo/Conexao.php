@@ -4,12 +4,6 @@ namespace sistema\Nucleo;
 
 use PDO;
 use PDOException;
-
-/**
- * Classe Conexao - Padrão Singleton: Retorna uma instância única de uma classe.
- *
- * @author Ronaldo Aires
- */
 class Conexao
 {
 

@@ -4,11 +4,6 @@ namespace sistema\Modelo;
 
 use sistema\Nucleo\Conexao;
 
-/**
- * Classe PostModelo
- *
- * @author Ronaldo Aires
- */
 class PostModelo
 {
     public function ler(int $id = null): array
