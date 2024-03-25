@@ -17,7 +17,7 @@ interface IClassLoader
      * @param object $class
      * @param string $method
      * @param array $parameters
-     * @return mixed
+     * @return object
      */
     public function loadClassMethod($class, string $method, array $parameters);
 

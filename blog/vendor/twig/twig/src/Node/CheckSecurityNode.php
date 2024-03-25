@@ -11,13 +11,11 @@
 
 namespace Twig\Node;
 
-use Twig\Attribute\YieldReady;
 use Twig\Compiler;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-#[YieldReady]
 class CheckSecurityNode extends Node
 {
     private $usedFilters;
@@ -60,8 +58,7 @@ class CheckSecurityNode extends Node
             ->indent()
             ->write(!$tags ? "[],\n" : "['".implode("', '", array_keys($tags))."'],\n")
             ->write(!$filters ? "[],\n" : "['".implode("', '", array_keys($filters))."'],\n")
-            ->write(!$functions ? "[],\n" : "['".implode("', '", array_keys($functions))."'],\n")
-            ->write("\$this->source\n")
+            ->write(!$functions ? "[]\n" : "['".implode("', '", array_keys($functions))."']\n")
             ->outdent()
             ->write(");\n")
             ->outdent()

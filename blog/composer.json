@@ -1,6 +1,6 @@
 {
-    "name": "udemy_php/blog",
-    "description": "curso de php8",
+    "name": "ceounset/cursophp8",
+    "description": "Curso de PHP 8",
     "type": "project",
     "autoload": {
         "psr-4": {
@@ -12,14 +12,17 @@
     },
     "authors": [
         {
-            "name": "João Filipe Pedatella Ferreira Marques",
-            "email": "havoc.planet@gmail.com",
+            "name": "Ronaldo Aires",
+            "homepage": "https://www.unset.com.br",
             "role": "Developer"
         }
     ],
+    "support": {
+        "email": "ceo@unset.com.br"
+    },
     "minimum-stability": "dev",
     "require": {
-        "php":">=8.0",
+        "php": ">=8.0",
         "pecee/simple-router": "dev-master",
         "twig/twig": "^3.0"
     }

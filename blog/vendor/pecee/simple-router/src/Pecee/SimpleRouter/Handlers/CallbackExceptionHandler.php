@@ -20,7 +20,7 @@ class CallbackExceptionHandler implements IExceptionHandler
     /**
      * @var Closure
      */
-    protected Closure $callback;
+    protected $callback;
 
     public function __construct(Closure $callback)
     {

@@ -9,12 +9,12 @@ class ClassNotFoundHttpException extends NotFoundHttpException
     /**
      * @var string
      */
-    protected string $class;
+    protected $class;
 
     /**
      * @var string|null
      */
-    protected ?string $method = null;
+    protected $method;
 
     public function __construct(string $class, ?string $method = null, string $message = "", int $code = 0, Throwable $previous = null)
     {

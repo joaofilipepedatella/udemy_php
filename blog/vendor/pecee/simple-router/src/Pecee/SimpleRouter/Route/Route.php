@@ -18,37 +18,31 @@ abstract class Route implements IRoute
      *
      * @var bool
      */
-    protected bool $filterEmptyParams = true;
-
-    /**
-     * If true the last parameter of the route will include ending trail/slash.
-     * @var bool
-     */
-    protected bool $slashParameterEnabled = false;
+    protected $filterEmptyParams = true;
 
     /**
      * Default regular expression used for parsing parameters.
      * @var string|null
      */
-    protected ?string $defaultParameterRegex = null;
-    protected string $paramModifiers = '{}';
-    protected string $paramOptionalSymbol = '?';
-    protected string $urlRegex = '/^%s\/?$/u';
-    protected ?IGroupRoute $group = null;
-    protected ?IRoute $parent = null;
+    protected $defaultParameterRegex;
+    protected $paramModifiers = '{}';
+    protected $paramOptionalSymbol = '?';
+    protected $urlRegex = '/^%s\/?$/u';
+    protected $group;
+    protected $parent;
     /**
      * @var string|callable|null
      */
     protected $callback;
-    protected ?string $defaultNamespace = null;
+    protected $defaultNamespace;
 
     /* Default options */
-    protected ?string $namespace = null;
-    protected array $requestMethods = [];
-    protected array $where = [];
-    protected array $parameters = [];
-    protected array $originalParameters = [];
-    protected array $middlewares = [];
+    protected $namespace;
+    protected $requestMethods = [];
+    protected $where = [];
+    protected $parameters = [];
+    protected $originalParameters = [];
+    protected $middlewares = [];
 
     /**
      * Render route
@@ -117,7 +111,7 @@ abstract class Route implements IRoute
         return $router->getClassLoader()->loadClassMethod($class, $method, $parameters);
     }
 
-    protected function parseParameters($route, $url, Request $request, $parameterRegex = null): ?array
+    protected function parseParameters($route, $url, $parameterRegex = null): ?array
     {
         $regex = (strpos($route, $this->paramModifiers[0]) === false) ? null :
             sprintf
@@ -129,10 +123,7 @@ abstract class Route implements IRoute
             );
 
         // Ensures that host names/domains will work with parameters
-        if ($route[0] === $this->paramModifiers[0]) {
-            $url = '/' . ltrim($url, '/');
-        }
-
+        $url = '/' . ltrim($url, '/');
         $urlRegex = '';
         $parameters = [];
 
@@ -140,7 +131,7 @@ abstract class Route implements IRoute
             $urlRegex = preg_quote($route, '/');
         } else {
 
-            foreach (preg_split('/((\.?-?\/?){[^' . $this->paramModifiers[1] . ']+' . $this->paramModifiers[1] . ')/', $route) as $key => $t) {
+            foreach (preg_split('/((-?\/?){[^}]+})/', $route) as $key => $t) {
 
                 $regex = '';
 
@@ -155,14 +146,13 @@ abstract class Route implements IRoute
                         $regex = $parameterRegex ?? $this->defaultParameterRegex ?? static::PARAMETERS_DEFAULT_REGEX;
                     }
 
-                    $regex = sprintf('((\/|-|\.)(?P<%2$s>%3$s))%1$s', $parameters[2][$key], $name, $regex);
+                    $regex = sprintf('((\/|-)(?P<%2$s>%3$s))%1$s', $parameters[2][$key], $name, $regex);
                 }
 
                 $urlRegex .= preg_quote($t, '/') . $regex;
             }
         }
 
-        // Get name of last param
         if (trim($urlRegex) === '' || (bool)preg_match(sprintf($this->urlRegex, $urlRegex), $url, $matches) === false) {
             return null;
         }
@@ -176,8 +166,7 @@ abstract class Route implements IRoute
             $lastParams = [];
 
             /* Only take matched parameters with name */
-            $originalPath = $request->getUrl()->getOriginalPath();
-            foreach ((array)$parameters[1] as $i => $name) {
+            foreach ((array)$parameters[1] as $name) {
 
                 // Ignore parent parameters
                 if (isset($groupParameters[$name]) === true) {
@@ -185,16 +174,10 @@ abstract class Route implements IRoute
                     continue;
                 }
 
-                // If last parameter and slash parameter is enabled, use slash according to original path (non sanitized version)
-                $lastParameter = $this->paramModifiers[0] . $name . $this->paramModifiers[1] . '/';
-                if ($this->slashParameterEnabled && ($i === count($parameters[1]) - 1) && (substr_compare($route, $lastParameter, -strlen($lastParameter)) === 0) && $originalPath[strlen($originalPath) - 1] === '/') {
-                    $matches[$name] .= '/';
-                }
-
                 $values[$name] = (isset($matches[$name]) === true && $matches[$name] !== '') ? $matches[$name] : null;
             }
 
-            $values += $lastParams;
+            $values = array_merge($values, $lastParams);
         }
 
         $this->originalParameters = $values;
@@ -403,17 +386,6 @@ abstract class Route implements IRoute
         return $this->namespace ?? $this->defaultNamespace;
     }
 
-    public function setSlashParameterEnabled(bool $enabled): self
-    {
-        $this->slashParameterEnabled = $enabled;
-        return $this;
-    }
-
-    public function getSlashParameterEnabled(): bool
-    {
-        return $this->slashParameterEnabled;
-    }
-
     /**
      * Export route settings to array so they can be merged with another route.
      *
@@ -441,10 +413,6 @@ abstract class Route implements IRoute
 
         if ($this->defaultParameterRegex !== null) {
             $values['defaultParameterRegex'] = $this->defaultParameterRegex;
-        }
-
-        if ($this->slashParameterEnabled === true) {
-            $values['includeSlash'] = $this->slashParameterEnabled;
         }
 
         return $values;
@@ -482,10 +450,6 @@ abstract class Route implements IRoute
 
         if (isset($settings['defaultParameterRegex']) === true) {
             $this->setDefaultParameterRegex($settings['defaultParameterRegex']);
-        }
-
-        if (isset($settings['includeSlash']) === true) {
-            $this->setSlashParameterEnabled($settings['includeSlash']);
         }
 
         return $this;

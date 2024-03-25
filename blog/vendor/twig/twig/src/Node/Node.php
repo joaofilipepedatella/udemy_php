@@ -12,7 +12,6 @@
 
 namespace Twig\Node;
 
-use Twig\Attribute\YieldReady;
 use Twig\Compiler;
 use Twig\Source;
 
@@ -21,7 +20,6 @@ use Twig\Source;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-#[YieldReady]
 class Node implements \Countable, \IteratorAggregate
 {
     protected $nodes;
@@ -29,6 +27,7 @@ class Node implements \Countable, \IteratorAggregate
     protected $lineno;
     protected $tag;
 
+    private $name;
     private $sourceContext;
 
     /**
@@ -37,7 +36,7 @@ class Node implements \Countable, \IteratorAggregate
      * @param int    $lineno     The line number
      * @param string $tag        The tag name associated with the Node
      */
-    public function __construct(array $nodes = [], array $attributes = [], int $lineno = 0, ?string $tag = null)
+    public function __construct(array $nodes = [], array $attributes = [], int $lineno = 0, string $tag = null)
     {
         foreach ($nodes as $name => $node) {
             if (!$node instanceof self) {
@@ -84,7 +83,7 @@ class Node implements \Countable, \IteratorAggregate
     public function compile(Compiler $compiler)
     {
         foreach ($this->nodes as $node) {
-            $compiler->subcompile($node);
+            $node->compile($compiler);
         }
     }
 

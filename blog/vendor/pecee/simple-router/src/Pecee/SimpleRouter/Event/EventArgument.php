@@ -12,17 +12,17 @@ class EventArgument implements IEventArgument
      * Event name
      * @var string
      */
-    protected string $eventName;
+    protected $eventName;
 
     /**
      * @var Router
      */
-    protected Router $router;
+    protected $router;
 
     /**
      * @var array
      */
-    protected array $arguments = [];
+    protected $arguments = [];
 
     public function __construct(string $eventName, Router $router, array $arguments = [])
     {

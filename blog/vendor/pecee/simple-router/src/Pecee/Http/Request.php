@@ -29,7 +29,7 @@ class Request
      * All request-types
      * @var string[]
      */
-    public static array $requestTypes = [
+    public static $requestTypes = [
         self::REQUEST_TYPE_GET,
         self::REQUEST_TYPE_POST,
         self::REQUEST_TYPE_PUT,
@@ -43,7 +43,7 @@ class Request
      * Post request-types.
      * @var string[]
      */
-    public static array $requestTypesPost = [
+    public static $requestTypesPost = [
         self::REQUEST_TYPE_POST,
         self::REQUEST_TYPE_PUT,
         self::REQUEST_TYPE_PATCH,
@@ -55,65 +55,65 @@ class Request
      *
      * @var array
      */
-    private array $data = [];
+    private $data = [];
 
     /**
      * Server headers
      * @var array
      */
-    protected array $headers = [];
+    protected $headers = [];
 
     /**
      * Request ContentType
      * @var string
      */
-    protected string $contentType;
+    protected $contentType;
 
     /**
      * Request host
-     * @var string|null
+     * @var string
      */
-    protected ?string $host;
+    protected $host;
 
     /**
      * Current request url
      * @var Url
      */
-    protected Url $url;
+    protected $url;
 
     /**
      * Request method
      * @var string
      */
-    protected string $method;
+    protected $method;
 
     /**
      * Input handler
      * @var InputHandler
      */
-    protected InputHandler $inputHandler;
+    protected $inputHandler;
 
     /**
      * Defines if request has pending rewrite
      * @var bool
      */
-    protected bool $hasPendingRewrite = false;
+    protected $hasPendingRewrite = false;
 
     /**
      * @var ILoadableRoute|null
      */
-    protected ?ILoadableRoute $rewriteRoute = null;
+    protected $rewriteRoute;
 
     /**
      * Rewrite url
      * @var string|null
      */
-    protected ?string $rewriteUrl = null;
+    protected $rewriteUrl;
 
     /**
      * @var array
      */
-    protected array $loadedRoutes = [];
+    protected $loadedRoutes = [];
 
     /**
      * Request constructor.
@@ -129,12 +129,7 @@ class Request
         $this->setHost($this->getHeader('http-host'));
 
         // Check if special IIS header exist, otherwise use default.
-        $url = $this->getHeader('unencoded-url');
-        if ($url !== null) {
-            $this->setUrl(new Url($url));
-        } else {
-            $this->setUrl(new Url(urldecode((string)$this->getHeader('request-uri'))));
-        }
+        $this->setUrl(new Url($this->getFirstHeader(['unencoded-url', 'request-uri'])));
         $this->setContentType((string)$this->getHeader('content-type'));
         $this->setMethod((string)($_POST[static::FORCE_METHOD_KEY] ?? $this->getHeader('request-method')));
         $this->inputHandler = new InputHandler($this);
@@ -224,16 +219,14 @@ class Request
      */
     public function getIp(bool $safeMode = false): ?string
     {
-        $headers = [];
-        if ($safeMode === false) {
-            $headers = [
+        $headers = ['remote-addr'];
+        if($safeMode === false) {
+            $headers = array_merge($headers, [
                 'http-cf-connecting-ip',
                 'http-client-ip',
                 'http-x-forwarded-for',
-            ];
+            ]);
         }
-
-        $headers[] = 'remote-addr';
 
         return $this->getFirstHeader($headers);
     }
@@ -303,9 +296,9 @@ class Request
      */
     public function getFirstHeader(array $headers, $defaultValue = null)
     {
-        foreach ($headers as $header) {
+        foreach($headers as $header) {
             $header = $this->getHeader($header);
-            if ($header !== null) {
+            if($header !== null) {
                 return $header;
             }
         }
@@ -329,7 +322,7 @@ class Request
      */
     protected function setContentType(string $contentType): self
     {
-        if (strpos($contentType, ';') > 0) {
+        if(strpos($contentType, ';') > 0) {
             $this->contentType = strtolower(substr($contentType, 0, strpos($contentType, ';')));
         } else {
             $this->contentType = strtolower($contentType);
@@ -366,12 +359,12 @@ class Request
      */
     public function isAjax(): bool
     {
-        return (strtolower((string)$this->getHeader('http-x-requested-with')) === 'xmlhttprequest');
+        return (strtolower($this->getHeader('http-x-requested-with')) === 'xmlhttprequest');
     }
 
     /**
      * Returns true when request-method is type that could contain data in the page body.
-     *
+     * 
      * @return bool
      */
     public function isPostBack(): bool
@@ -395,7 +388,11 @@ class Request
     {
         $this->url = $url;
 
-        if ($this->isSecure() === true) {
+        if ($this->url->getHost() === null) {
+            $this->url->setHost((string)$this->getHost());
+        }
+
+        if($this->isSecure() === true) {
             $this->url->setScheme('https');
         }
     }
@@ -405,11 +402,6 @@ class Request
      */
     public function setHost(?string $host): void
     {
-        // Strip any potential ports from hostname
-        if (strpos((string)$host, ':') !== false) {
-            $host = strstr($host, strrchr($host, ':'), true);
-        }
-
         $this->host = $host;
     }
 

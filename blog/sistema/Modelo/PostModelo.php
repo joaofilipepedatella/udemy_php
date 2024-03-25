@@ -4,18 +4,22 @@ namespace sistema\Modelo;
 
 use sistema\Nucleo\Conexao;
 
+/**
+ * Classe PostModelo
+ *
+ * @author Ronaldo Aires
+ */
 class PostModelo
 {
-  public function ler(int $id = null): array
-  {
-    $where = ($id ? "WHERE id = {$id}" : '');
+    public function ler(int $id = null): array
+    {
+        $where = ($id ? "WHERE id = {$id}" : '');
+        
+        $query = "SELECT * FROM posts {$where} "; 
+        $stmt = Conexao::getInstancia()->query($query);
+        $resultado = $stmt->fetchAll();
 
-    $query = "SELECT * FROM posts {$where}";
-
-    $statement = Conexao::getInstancia()->query($query);
-
-    $resultado = $statement->fetchAll();
-
-    return $resultado;
-  }
+        return $resultado;        
+    }
+    
 }
