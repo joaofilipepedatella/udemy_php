@@ -27,8 +27,9 @@ class Conexao
                 die("Erro de conexão:: " . $ex->getMessage());
             }
 
-            return self::$instancia;
+            
         }
+        return self::$instancia;
     }
 
     /**
