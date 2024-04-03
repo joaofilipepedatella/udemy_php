@@ -7,21 +7,20 @@ $senha = '';
 try {
   $conexao = new PDO($dsn, $usuario, $senha); //Conexão com o banco de dados mysql
 
-  //criação da tabela no banco de dados
   $query = '
-    create table if not exists tb_usuarios(
-      id int not null primary key auto_increment,
-      nome varchar(50) not null,
-      email varchar(100) not null,
-      senha varchar(32) not null
-    )
+    select * from tb_usuarios where id=1
   ';
-  
-  $retorno = $conexao->exec($query);
 
-  echo $retorno;
+  $stmt = $conexao->query($query);
 
-}catch(PDOException $e){
-  echo 'Erro: ' . $e->getCode() . '<br> Mensagem: ' . $e->getMessage(); 
+  $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+  echo '<pre>';
+  print_r($usuario);
+  echo '</pre>';
+
+  echo $usuario->nome;
+
+} catch (PDOException $e) {
+  echo 'Erro: ' . $e->getCode() . '<br> Mensagem: ' . $e->getMessage();
 }
-
