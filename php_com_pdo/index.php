@@ -8,18 +8,24 @@ try {
   $conexao = new PDO($dsn, $usuario, $senha); //Conexão com o banco de dados mysql
 
   $query = '
-    select * from tb_usuarios where id=1
+    select * from tb_usuarios
   ';
 
-  $stmt = $conexao->query($query);
+  //$stmt = $conexao->query($query);
 
-  $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+  foreach( $conexao->query($query) as $key => $value){
+    print_r($value['nome']);
+    echo '<hr>';
+  }
 
-  echo '<pre>';
-  print_r($usuario);
-  echo '</pre>';
+  //echo '<pre>';
+  //print_r($lista_usuarios);
+  //echo '</pre>';
 
-  echo $usuario->nome;
+  /* foreach($lista_usuarios as $key => $value){
+    echo $value['nome'];
+    echo '<hr>';
+  } */
 
 } catch (PDOException $e) {
   echo 'Erro: ' . $e->getCode() . '<br> Mensagem: ' . $e->getMessage();
